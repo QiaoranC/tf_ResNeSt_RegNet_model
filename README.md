@@ -21,6 +21,7 @@ ResNest50
 ResNest101
 ResNest200
 ResNest269
+
 RegNetX400
 RegNetX1.6
 RegNetY400
