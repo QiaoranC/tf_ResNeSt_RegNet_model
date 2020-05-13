@@ -1,9 +1,10 @@
 # tf_ResNeSt_RegNet_model
  tensorflow in **ResNeSt** and **RegNet**, model only, no pertrain model for download.
- 
+
+Easily to read? and change?
 welcome for using it, ask question, find some bugs maybe.
 
-usage: 
+usage is simple: 
 ```
 from models.model_factory import get_model
 
