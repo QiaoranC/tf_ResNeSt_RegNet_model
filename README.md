@@ -1,6 +1,8 @@
 # tf_ResNeSt_RegNet_model
  tensorflow in **ResNeSt** and **RegNet**, model only, no pertrain model for download.
 
+ResNeSt from https://github.com/zhanghang1989/ResNeSt, basically just a tensorflow version. 
+
 Easily to read? and change?
 
 welcome for using it, ask question, find some bugs maybe.
