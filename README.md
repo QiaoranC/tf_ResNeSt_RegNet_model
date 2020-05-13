@@ -17,14 +17,14 @@ model = get_model(model_name="ResNest50",input_shape=input_shape,n_classes=n_cla
 
 models now support:
 ```
-'ResNest50',
-'ResNest101',
-'ResNest200',
-'ResNest269',
-'RegNetX400',
-'RegNetX1.6',
-'RegNetY400',
-'RegNetY1.6'
+ResNest50
+ResNest101
+ResNest200
+ResNest269
+RegNetX400
+RegNetX1.6
+RegNetY400
+RegNetY1.6
 
 ```
 
