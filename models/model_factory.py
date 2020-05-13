@@ -1,6 +1,5 @@
-# from .RegNet import RegNet
-from ResNest import ResNest
-from RegNet import RegNet
+from .ResNest import ResNest
+from .RegNet import RegNet
 
 def get_model(model_name='ResNest50',input_shape=(224,224,3),n_classes=81,
                 verbose=False,dropout_rate=0,fc_activation=None,**kwargs):
