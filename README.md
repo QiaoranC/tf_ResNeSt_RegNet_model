@@ -3,7 +3,7 @@
 
 ResNeSt from https://github.com/zhanghang1989/ResNeSt, basically just a tensorflow version. 
 
-Easily to read? and change?
+easy to read and modified
 
 welcome for using it, ask question, find some bugs maybe.
 
@@ -13,10 +13,14 @@ from models.model_factory import get_model
 
 input_shape = [224,244,3]
 n_classes=81
-fc_activation='softmax' #softmax sigmoid
+fc_activation='softmax'
+
+#softmax for multi classfication 
+#sigmoid for multi label
+#verbose = True, will print some layers output shape
 
 model = get_model(model_name="ResNest50",input_shape=input_shape,n_classes=n_classes,
-                verbose=True,fc_activation=fc_activation)
+                verbose=False,fc_activation=fc_activation)
 ```
 
 models now support:
