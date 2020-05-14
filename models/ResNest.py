@@ -377,13 +377,13 @@ class ResNest():
             x = layers.Activation(self.active)(x)
 
         x = self._make_layer(x,blocks=self.blocks_set[0],filters=64,stride=1,is_first=False)
-        print('-'*5,'layer1 out',x.shape,'-'*5)
+        if self.verbose: print('-'*5,'layer1 out',x.shape,'-'*5)
         x = self._make_layer(x,blocks=self.blocks_set[1],filters=128,stride=2)
-        print('-'*5,'layer2 out',x.shape,'-'*5)
+        if self.verbose: print('-'*5,'layer2 out',x.shape,'-'*5)
         x = self._make_layer(x,blocks=self.blocks_set[2],filters=256,stride=2)
-        print('-'*5,'layer3 out',x.shape,'-'*5)
+        if self.verbose: print('-'*5,'layer3 out',x.shape,'-'*5)
         x = self._make_layer(x,blocks=self.blocks_set[3],filters=512,stride=2)
-        print('-'*5,'layer4 out',x.shape,'-'*5)
+        if self.verbose: print('-'*5,'layer4 out',x.shape,'-'*5)
 
         concats = GlobalAveragePooling2D(name='avg_pool')(x)
         if self.verbose: print("pool_out:",concats.shape)
