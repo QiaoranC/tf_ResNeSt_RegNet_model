@@ -84,7 +84,8 @@ class GroupedConv2D(object):
         if len(self._convs) == 1:
             return self._convs[0](inputs)
 
-        filters = inputs.shape[self._channel_axis].value
+        # filters = inputs.shape[self._channel_axis].value
+        filters = inputs.shape[self._channel_axis]
         splits = self._split_channels(filters, len(self._convs))
         x_splits = tf.split(inputs, splits, self._channel_axis)
         x_outputs = [c(x) for x, c in zip(x_splits, self._convs)]
