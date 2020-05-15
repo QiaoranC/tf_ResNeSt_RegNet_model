@@ -22,8 +22,16 @@ fc_activation = 'softmax'
 model = get_model(model_name="ResNest50",input_shape=input_shape,n_classes=n_classes,
                 verbose=False,fc_activation=fc_activation)
 
-
 ```
+
+if you want use **Mish** as activation (default is relu): 
+```
+#it indeed imporve results, but the memoey usage is quite high
+
+model = get_model(model_name="ResNest50",input_shape=input_shape,n_classes=n_classes,
+                verbose=False,fc_activation=fc_activation,active='mish')
+```
+
 
 models now support:
 ```
