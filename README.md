@@ -1,9 +1,7 @@
 # tf_ResNeSt_RegNet_model
- tensorflow in **ResNeSt** and **RegNet**, model only, no pertrain model for download.
+ tensorflow in **ResNeSt** and **RegNet**, model only, no pertrain model for download. easy to read and modified.
 
 ResNeSt from https://github.com/zhanghang1989/ResNeSt, basically just a tensorflow version.
-
-easy to read and modified
 
 welcome for using it, ask question, find some bugs maybe.
 
@@ -44,7 +42,7 @@ RegNetX400
 RegNetX1.6
 RegNetY400
 RegNetY1.6
-
+And AnyOther RegNetX/Y
 ```
 
 for RegNet, cause there are various version, you can easily set it by `stage_depth`,`stage_width`,`stage_G`.
