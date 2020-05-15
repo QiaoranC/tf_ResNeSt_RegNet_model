@@ -14,6 +14,8 @@ fc_activation = 'softmax'
 
 model = get_model(model_name="ResNest50",input_shape=input_shape,n_classes=n_classes,
                 verbose=False,fc_activation=fc_activation)
+b
+model.compile(optimizer='adam', loss=tf.keras.losses.BinaryCrossentropy())
 ```
 
 
