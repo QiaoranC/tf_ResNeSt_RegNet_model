@@ -84,7 +84,10 @@ class GroupedConv2D(object):
         if len(self._convs) == 1:
             return self._convs[0](inputs)
 
-        filters = inputs.shape[self._channel_axis].value
+        if tf.__version__ < "2.0.0":
+            filters = inputs.shape[self._channel_axis].value
+        else:
+            filters = inputs.shape[self._channel_axis]
         splits = self._split_channels(filters, len(self._convs))
         x_splits = tf.split(inputs, splits, self._channel_axis)
         x_outputs = [c(x) for x, c in zip(x_splits, self._convs)]
@@ -284,18 +287,3 @@ class RegNet():
         if self.verbose: print('-------------------------------------------')
         if self.verbose: print('')
         return model
-
-
-if __name__ == "__main__":
-    import sys
-    sys.path.append("..")
-    from utils.tools import load_cfg
-
-    defaut_cfg_path = '../configs/default_cfg.json'
-    args_config = '../configs/RuiJing_refine82_tfdata_img_regnet_T0_4.0SE.json'
-    cfg = load_cfg(defaut_cfg_path,args_config)
-    # print(cfg.__dict__)
-    model = RegNet(cfg,verbose=True).build()
-    # print('123')
-    # model = getModel.build(cfg)
-    # model.summary()
