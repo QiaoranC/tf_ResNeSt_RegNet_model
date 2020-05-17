@@ -1,9 +1,16 @@
-# tf_ResNeSt_RegNet_model
- tensorflow in **ResNeSt** and **RegNet**, model only, no pertrain model for download. easy to read and modified.   
+# tf ResNeSt and RegNet
+
+## Introduction
+ Currently support tensorflow in 
+ - **ResNeSt** 
+ - **RegNet**
+ 
+model only, no pertrain model for download. easy to read and modified.   
 welcome for using it, ask question, test it, find some bugs maybe.
 
-ResNeSt from https://github.com/zhanghang1989/ResNeSt, basically just a tensorflow version.
+ResNeSt based on [offical github](https://github.com/zhanghang1989/ResNeSt) .
 
+## Usage
 usage is simple:
 ```
 from models.model_factory import get_model
@@ -26,7 +33,7 @@ model = get_model(model_name="ResNest50",input_shape=input_shape,n_classes=n_cla
                 verbose=False,fc_activation=fc_activation,active='mish')
 ```
 
-
+## Models 
 models now support:
 ```
 ResNest50
@@ -40,9 +47,8 @@ RegNetY400
 RegNetY1.6
 AnyOther RegNetX/Y
 ```
-
+#### RegNet
 for RegNet, cause there are various version, you can easily set it by `stage_depth`,`stage_width`,`stage_G`.
-details seting from follwing pic from orginal paper https://arxiv.org/abs/2003.13678 .
 
 ```
 #RegNetY600
@@ -56,8 +62,11 @@ model = get_model(model_name="RegNet",input_shape=input_shape,n_classes=n_classe
                 stage_width=[48,96,240,528],stage_G=24,SEstyle_atten="noSE")
 ```
 
+details seting (from orginal paper ):
+- [facebookresearch/pycls](https://github.com/facebookresearch/pycls)
+
 ![alt text](https://raw.githubusercontent.com/QiaoranC/tf_ResNeSt_RegNet_model/master/readme_img/regnet_setting.png)
 
-
+## Discussion
 I compared **ResNeSt50** and some **RegNet**(below 4.0GF) in my own project, also compared to **EfficientNet b0/b1/b2**.
 it seems **EfficientNet** is still good at balance in size/speed and accuracy, and **ResNeSt50** performe well at accuarcy also lower in size/speed, And **RegNet** not that fast and acuracy not that good, seems normal.
