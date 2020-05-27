@@ -38,6 +38,20 @@ model = get_model(model_name="ResNest50",input_shape=input_shape,n_classes=n_cla
 
 if you add CB_Net in ResNeSt: add `using_cb=True` like:
 ```
+"""
+beware that if using CB_Net, the input height and width should be divisibility of 
+2 at least 5 times, like input [224,448]<->[112,224]<->[56,112]<->[28,56]<->[7,28]
+correct way:
+[224,224] downsample->[112,112],
+[112,112] upsample->[224,224],
+then [224,224]+[224,224]
+
+incorrect way:
+[223,223] downsample->[112,112],
+[112,112] upsample->[224,224],
+[223,223] != [224,224] cannt add
+"""
+
 model = get_model(model_name="ResNest50",...,using_cb=True)
 ```
 
