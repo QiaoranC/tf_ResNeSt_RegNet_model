@@ -15,6 +15,7 @@ from tensorflow.keras.layers import (
     GlobalAveragePooling2D,
     Input,
     MaxPool2D,
+    UpSampling2D,
 )
 
 
@@ -49,7 +50,7 @@ def mish(inputs):
 
 class GroupedConv2D(object):
     """Groupped convolution.
-    https://github.com/tensorflow/tpu/blob/master/models/official/mnasnet/mixnet/custom_layers.py
+    https://github.com/tensorflow/tpu/blob/master/models/official/mnasnet/mixnet/custom_py
     Currently tf.keras and tf.layers don't support group convolution, so here we
     use split/concat to implement this op. It reuses kernel_size for group
     definition, where len(kernel_size) is number of groups. Notably, it allows
@@ -105,7 +106,7 @@ class ResNest:
     def __init__(self, verbose=False, input_shape=(224, 224, 3), active="relu", n_classes=81,
                  dropout_rate=0.2, fc_activation=None, blocks_set=[3, 4, 6, 3], radix=2, groups=1,
                  bottleneck_width=64, deep_stem=True, stem_width=32, block_expansion=4, avg_down=True,
-                 avd=True, avd_first=False, preact=False, using_basic_block=False):
+                 avd=True, avd_first=False, preact=False, using_basic_block=False,using_cb=False):
         self.channel_axis = -1  # not for change
         self.verbose = verbose
         self.active = active  # default relu
@@ -130,6 +131,7 @@ class ResNest:
         self.dilation = 1
         self.preact = preact
         self.using_basic_block = using_basic_block
+        self.using_cb = using_cb
 
     def _make_stem(self, input_tensor, stem_width=64, deep_stem=False):
         x = input_tensor
@@ -350,6 +352,14 @@ class ResNest:
                 # print(i,x.shape)
         return x
 
+    def _make_Composite_layer(self,input_tensor,filters=256,kernel_size=1,stride=1,upsample=True):
+        x = input_tensor
+        x = Conv2D(filters, kernel_size, strides=stride, use_bias=False)(x)
+        x = BatchNormalization(axis=self.channel_axis, epsilon=1.001e-5)(x)
+        if upsample:
+            x = UpSampling2D(size=2)(x)
+        return x
+
     def build(self):
         input_sig = Input(shape=self.input_shape)
         x = self._make_stem(input_sig, stem_width=self.stem_width, deep_stem=self.deep_stem)
@@ -367,16 +377,40 @@ class ResNest:
         if self.preact is True:
             x = BatchNormalization(axis=self.channel_axis, epsilon=1.001e-5)(x)
             x = Activation(self.active)(x)
-
+        
+        if self.using_cb:
+            second_x = x
+            second_x = self._make_layer(x, blocks=self.blocks_set[0], filters=64, stride=1, is_first=False)
+            second_x_tmp = self._make_Composite_layer(second_x,filters=x.shape[-1],upsample=False)
+            if self.verbose: print('layer1 db_com',second_x_tmp.shape)
+            x = Add()([second_x_tmp, x])
         x = self._make_layer(x, blocks=self.blocks_set[0], filters=64, stride=1, is_first=False)
         if self.verbose:
             print("-" * 5, "layer1 out", x.shape, "-" * 5)
+
+        if self.using_cb:
+            second_x = self._make_layer(x, blocks=self.blocks_set[1], filters=128, stride=2)
+            second_x_tmp = self._make_Composite_layer(second_x,filters=x.shape[-1])
+            if self.verbose: print('layer2 db_com',second_x_tmp.shape)
+            x = Add()([second_x_tmp, x])
         x = self._make_layer(x, blocks=self.blocks_set[1], filters=128, stride=2)
         if self.verbose:
             print("-" * 5, "layer2 out", x.shape, "-" * 5)
+
+        if self.using_cb:
+            second_x = self._make_layer(x, blocks=self.blocks_set[2], filters=256, stride=2)
+            second_x_tmp = self._make_Composite_layer(second_x,filters=x.shape[-1])
+            if self.verbose: print('layer3 db_com',second_x_tmp.shape)
+            x = Add()([second_x_tmp, x])
         x = self._make_layer(x, blocks=self.blocks_set[2], filters=256, stride=2)
         if self.verbose:
             print("-" * 5, "layer3 out", x.shape, "-" * 5)
+
+        if self.using_cb:
+            second_x = self._make_layer(x, blocks=self.blocks_set[3], filters=512, stride=2)
+            second_x_tmp = self._make_Composite_layer(second_x,filters=x.shape[-1])
+            if self.verbose: print('layer4 db_com',second_x_tmp.shape)
+            x = Add()([second_x_tmp, x])
         x = self._make_layer(x, blocks=self.blocks_set[3], filters=512, stride=2)
         if self.verbose:
             print("-" * 5, "layer4 out", x.shape, "-" * 5)

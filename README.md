@@ -10,6 +10,10 @@ welcome for using it, ask question, test it, find some bugs maybe.
 
 ResNeSt based on [offical github](https://github.com/zhanghang1989/ResNeSt) .
 
+## Update
+**2020-5-27**: ResNeSt add [CB-Net](https://arxiv.org/pdf/1909.03625.pdf) style to enahce backbone. theoretically, it should improve the results. Wait for test.
+
+
 ## Usage
 usage is simple:
 ```
@@ -31,6 +35,12 @@ if you want use `Mish` as activation (default is `relu`):
 model = get_model(model_name="ResNest50",input_shape=input_shape,n_classes=n_classes,
                 verbose=False,fc_activation=fc_activation,active='mish')
 ```
+
+if you add CB_Net in ResNeSt: add `using_cb=True` like:
+```
+model = get_model(model_name="ResNest50",...,using_cb=True)
+```
+
 
 ## Models 
 models now support:
@@ -65,6 +75,10 @@ details seting (from orginal paper ):
 - [facebookresearch/pycls](https://github.com/facebookresearch/pycls)
 
 ![alt text](https://raw.githubusercontent.com/QiaoranC/tf_ResNeSt_RegNet_model/master/readme_img/regnet_setting.png)
+
+
+CB-Net, 
+![alt text](https://raw.githubusercontent.com/QiaoranC/tf_ResNeSt_RegNet_model/master/readme_img/CBNet.png)
 
 ## Discussion
 I compared **ResNeSt50** and some **RegNet**(below 4.0GF) in my own project, also compared to **EfficientNet b0/b1/b2**.

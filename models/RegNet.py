@@ -100,7 +100,7 @@ class RegNet():
     # def __init__(self,cfg,verbose=False,training=None):
     def __init__(self,verbose=False,input_shape=(224,224,3),active='relu',n_classes=81,
                 dropout_rate=0.2,fc_activation=None,stem_set=48,stage_depth=[2,6,17,2],
-                stage_width=[48,120,336,888],stage_G=24,SEstyle_atten="SE",
+                stage_width=[48,120,336,888],stage_G=24,SEstyle_atten="SE",using_cb=False,
                 ):
         self.channel_axis = -1 #not for change
         self.verbose = verbose
@@ -115,6 +115,7 @@ class RegNet():
         self.stage_depth = stage_depth
         self.stage_width = stage_width
         self.stage_G = stage_G
+        self.using_cb = using_cb #not implement yet
         
 
     def _squeeze_excite_block(self,input_tensor,ratio=16,input_type='2d'):
