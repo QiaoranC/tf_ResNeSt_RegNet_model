@@ -77,7 +77,7 @@ details seting (from orginal paper ):
 ![alt text](https://raw.githubusercontent.com/QiaoranC/tf_ResNeSt_RegNet_model/master/readme_img/regnet_setting.png)
 
 
-CB-Net, 
+- CB-Net, using this style to enhace ResNest
 ![alt text](https://raw.githubusercontent.com/QiaoranC/tf_ResNeSt_RegNet_model/master/readme_img/CBNet.png)
 
 ## Discussion
