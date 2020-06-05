@@ -13,6 +13,7 @@ ResNeSt based on [offical github](https://github.com/zhanghang1989/ResNeSt) .
 
 ## Update
 **2020-6-5**: Add DETR (res34, resNest50 backbone) **End-to-End Object Detection with Transformers**, Experiment and inovation model, i slightly modified it into a classficaiton verison. Free to try.
+
 **2020-5-27**: ResNeSt add [CB-Net](https://arxiv.org/pdf/1909.03625.pdf) style to enahce backbone. theoretically, it should improve the results. Wait for test.
 
 ## Usage
