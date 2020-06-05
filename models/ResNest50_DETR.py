@@ -17,7 +17,11 @@ from tensorflow.keras.layers import (
     Input,
     MaxPool2D,
     UpSampling2D,
+    ZeroPadding2D,
+    MaxPooling2D,
+    Conv1D,
 )
+from models.transformer import Transformer
 
 
 def get_flops(model):
@@ -103,11 +107,13 @@ class GroupedConv2D(object):
         return x
 
 
-class ResNest:
+class DETR:
     def __init__(self, verbose=False, input_shape=(224, 224, 3), active="relu", n_classes=81,
                  dropout_rate=0.2, fc_activation=None, blocks_set=[3, 4, 6, 3], radix=2, groups=1,
                  bottleneck_width=64, deep_stem=True, stem_width=32, block_expansion=4, avg_down=True,
-                 avd=True, avd_first=False, preact=False, using_basic_block=False,using_cb=False):
+                 avd=True, avd_first=False, preact=False, using_basic_block=False,using_cb=False,
+                 using_transformer=True,hidden_dim=512,nheads=8,num_encoder_layers=6,
+                 num_decoder_layers=6,n_query_pos=100):
         self.channel_axis = -1  # not for change
         self.verbose = verbose
         self.active = active  # default relu
@@ -116,6 +122,7 @@ class ResNest:
         self.dropout_rate = dropout_rate
         self.fc_activation = fc_activation
 
+        #resnest set
         self.blocks_set = blocks_set
         self.radix = radix
         self.cardinality = groups
@@ -133,6 +140,15 @@ class ResNest:
         self.preact = preact
         self.using_basic_block = using_basic_block
         self.using_cb = using_cb
+
+        #DETR set
+        # self.training = training
+        self.using_transformer = using_transformer
+        self.hidden_dim = hidden_dim
+        self.nheads = nheads
+        self.num_encoder_layers = num_encoder_layers
+        self.num_decoder_layers = num_decoder_layers
+        self.n_query_pos = n_query_pos
 
     def _make_stem(self, input_tensor, stem_width=64, deep_stem=False):
         x = input_tensor
@@ -361,6 +377,67 @@ class ResNest:
             x = UpSampling2D(size=2)(x)
         return x
 
+    def get_trainable_parameter(self,shape=(100,128)):
+        w_init = tf.random_normal_initializer()
+        parameter = tf.Variable(
+            initial_value=w_init(shape=shape,
+                                dtype='float32'),
+            trainable=True)
+        return parameter
+
+    def __make_transformer_top(self,x,verbose=False):
+        h = Conv2D(self.hidden_dim,kernel_size=1,strides=1,
+                    padding='same',kernel_initializer='he_normal',
+                    use_bias=True,data_format='channels_last')(x)
+        if verbose: print('h',h.shape)
+
+        if tf.__version__ < "2.0.0":
+            H,W = h.shape[1].value,h.shape[2].value
+        else:
+            H,W = h.shape[1],h.shape[2]
+        if verbose: print('H,W',H,W)
+        
+        query_pos = self.get_trainable_parameter(shape=(self.n_query_pos, self.hidden_dim))
+        row_embed = self.get_trainable_parameter(shape=(100, self.hidden_dim // 2))
+        col_embed = self.get_trainable_parameter(shape=(100, self.hidden_dim // 2))
+
+        cat1_col = tf.expand_dims(col_embed[:W], 0)
+        cat1_col = tf.repeat(cat1_col, H, axis=0)
+        if verbose: print('col_embed',cat1_col.shape)
+
+        cat2_row = tf.expand_dims(row_embed[:H], 1)
+        cat2_row = tf.repeat(cat2_row, W, axis=1)
+        if verbose: print('row_embed',cat2_row.shape)
+
+        pos = tf.concat([cat1_col,cat2_row],axis=-1)
+        if tf.__version__ < "2.0.0":
+            pos = tf.expand_dims(tf.reshape(pos,[pos.shape[0].value*pos.shape[1].value,-1]),0)
+        else:
+            pos = tf.expand_dims(tf.reshape(pos,[pos.shape[0]*pos.shape[1],-1]),0)
+
+        h = tf.reshape(h,[-1, h.shape[1]*h.shape[2],h.shape[3]])
+        temp_input = pos+h
+
+        h_tag = tf.transpose(h,perm=[0, 2, 1])
+        if verbose: print('h_tag transpose1',h_tag.shape)
+        h_tag = Conv1D(query_pos.shape[0],kernel_size=1,strides=1,
+                    padding='same',kernel_initializer='he_normal',
+                    use_bias=True,data_format='channels_last')(h_tag)
+        if verbose: print('h_tag conv',h_tag.shape)
+        h_tag = tf.transpose(h_tag,perm=[0, 2, 1])
+        if verbose: print('h_tag transpose2',h_tag.shape)
+
+        query_pos = tf.expand_dims(query_pos,0)
+        if verbose: print('query_pos',query_pos.shape)
+        query_pos+=h_tag
+        query_pos-=h_tag
+
+        self.transformer = Transformer(
+                        d_model=self.hidden_dim, nhead=self.nheads, num_encoder_layers=self.num_encoder_layers,
+                        num_decoder_layers=self.num_decoder_layers)
+        atten_out, attention_weights = self.transformer(temp_input, query_pos)
+        return atten_out
+
     def build(self):
         get_custom_objects().update({'mish': Mish(mish)})
 
@@ -402,16 +479,17 @@ class ResNest:
             x = self._make_layer(x, blocks=self.blocks_set[idx], filters=b1_b3_filters[idx], stride=2)
             if self.verbose: print('----- layer {} out {} -----'.format(idx,x.shape))
 
-        x = GlobalAveragePooling2D(name='avg_pool')(x)
-        if self.verbose: print('GlobalAveragePooling2D',x.shape)
-        # concats = GlobalAveragePooling2D(name="avg_pool")(x)
-        if self.verbose:
-            print("pool_out:", concats.shape)
+        if self.using_transformer:
+            x = self.__make_transformer_top(x,verbose=self.verbose)
+            if self.verbose: print('transformer out',x.shape)
+        else:
+            x = GlobalAveragePooling2D(name='avg_pool')(x)
+            if self.verbose: print('GlobalAveragePooling2D',x.shape)
 
         if self.dropout_rate > 0:
             x = Dropout(self.dropout_rate, noise_shape=None)(x)
 
-        fc_out = Dense(self.n_classes, kernel_initializer="he_normal", use_bias=False, name="fc_NObias")(concats)
+        fc_out = Dense(self.n_classes, kernel_initializer="he_normal", use_bias=False, name="fc_NObias")(x)
         if self.verbose:
             print("fc_out:", fc_out.shape)
 
@@ -421,7 +499,7 @@ class ResNest:
         model = models.Model(inputs=input_sig, outputs=fc_out)
 
         if self.verbose:
-            print("Resnest builded with input {}, output{}".format(input_sig.shape, fc_out.shape))
+            print("Resnest50_DETR builded with input {}, output{}".format(input_sig.shape, fc_out.shape))
         if self.verbose:
             print("-------------------------------------------")
         if self.verbose:

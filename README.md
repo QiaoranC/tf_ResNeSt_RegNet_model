@@ -1,9 +1,10 @@
-# tf ResNeSt and RegNet
+# tf ResNeSt and RegNet and DETR
 
 ## Introduction
  Currently support tensorflow in 
  - **ResNeSt** 
  - **RegNet**
+ - **DETR** (modified classfication)
  
 model only, no pertrain model for download. easy to read and modified.   
 welcome for using it, ask question, test it, find some bugs maybe.
@@ -11,8 +12,8 @@ welcome for using it, ask question, test it, find some bugs maybe.
 ResNeSt based on [offical github](https://github.com/zhanghang1989/ResNeSt) .
 
 ## Update
+**2020-6-5**: Add DETR (res34, resNest50 backbone) **End-to-End Object Detection with Transformers**, Experiment and inovation model, i slightly modified it into a classficaiton verison. Free to try.
 **2020-5-27**: ResNeSt add [CB-Net](https://arxiv.org/pdf/1909.03625.pdf) style to enahce backbone. theoretically, it should improve the results. Wait for test.
-
 
 ## Usage
 usage is simple:
@@ -29,14 +30,14 @@ model.compile(optimizer='adam', loss=tf.keras.losses.BinaryCrossentropy())
 ```
 
 
-if you want use `Mish` as activation (default is `relu`): 
+- if you want use `Mish` as activation (default is `relu`): 
 ```
 #it imporve the results, but come with high memory usage
 model = get_model(model_name="ResNest50",input_shape=input_shape,n_classes=n_classes,
                 verbose=False,fc_activation=fc_activation,active='mish')
 ```
 
-if you add CB_Net in ResNeSt: add `using_cb=True` like:
+- if you add CB_Net in ResNeSt: add `using_cb=True` like:
 ```
 """
 Beware that if using CB_Net, the input height and width should be divisibility of 
@@ -55,6 +56,21 @@ incorrect way:
 
 model = get_model(model_name="ResNest50",...,using_cb=True)
 ```
+- DETR experiment model, free to modified the transformer setting.
+```
+# ResNest50+CB+transfomer looks powerful! but heavily cost.
+model_name = 'ResNest50_DETR' 
+
+#res34 not implement using_cb yet, it supporse to be a lighter verison.
+model_name = 'res34_DETR' 
+
+model = get_model(model_name=model_name,input_shape=input_shape,
+                n_classes=n_classes,verbose=True,
+                fc_activation=fc_activation,using_cb=True,
+                hidden_dim=512,nheads=8,num_encoder_layers=6,
+                num_decoder_layers=6,n_query_pos=100)
+
+```
 
 
 ## Models 
@@ -70,6 +86,9 @@ RegNetX1.6
 RegNetY400
 RegNetY1.6
 AnyOther RegNetX/Y
+
+res34_DETR
+ResNest50_DETR
 ```
 #### RegNet
 for RegNet, cause there are various version, you can easily set it by `stage_depth`,`stage_width`,`stage_G`.
@@ -94,6 +113,10 @@ details seting (from orginal paper ):
 
 - CB-Net, using this style to enhace ResNest
 ![alt text](https://raw.githubusercontent.com/QiaoranC/tf_ResNeSt_RegNet_model/master/readme_img/CBNet.png)
+
+#### DETR
+-  orginal is detection version with two linear out (box and cls), here only clsficaiton (with some modification), if anyone interesting in the detection version, asked and i can change to a deteciton version. 
+ - torch version using `nn.Parameter` to buildt `q,k,v`, but in tensorflow2.x, i tried similar `Variable`, but the `Variable` shape can't set batch dimed like `(?,100,100)`, and model layers output are like (?,7,7,2048), So to combine Variable into model, i use a trick way, to make a fake layer out `(?,100,100)`, and add with the `Variable` (100,100),  Variable will become `(?,100,100)` then can feed into `transformer`. I didnot found a better way. Again, Welcome any good ideal or suggesions.
 
 ## Discussion
 I compared **ResNeSt50** and some **RegNet**(below 4.0GF) in my own project, also compared to **EfficientNet b0/b1/b2**.

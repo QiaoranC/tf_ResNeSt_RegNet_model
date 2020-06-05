@@ -1,5 +1,7 @@
 from .ResNest import ResNest
 from .RegNet import RegNet
+from .res34_DETR import DETR as res34_DETR
+from .ResNest50_DETR import DETR as ResNest50_DETR
 
 def get_model(model_name='ResNest50',input_shape=(224,224,3),n_classes=81,
                 verbose=False,dropout_rate=0,fc_activation=None,**kwargs):
@@ -46,7 +48,6 @@ def get_model(model_name='ResNest50',input_shape=(224,224,3),n_classes=81,
         n_classes=n_classes, dropout_rate=dropout_rate, fc_activation=fc_activation,
         stage_depth=[1,3,6,6],stage_width=[48,104,208,440],stage_G=16,SEstyle_atten="SE",**kwargs).build()
    
-    
     elif model_name == 'RegNetY1.6':
         model = RegNet(verbose=verbose, input_shape=input_shape,
         n_classes=n_classes, dropout_rate=dropout_rate, fc_activation=fc_activation,
@@ -55,7 +56,15 @@ def get_model(model_name='ResNest50',input_shape=(224,224,3),n_classes=81,
     elif model_name == 'RegNet':
         model = RegNet(verbose=verbose, input_shape=input_shape,
         n_classes=n_classes, dropout_rate=dropout_rate, fc_activation=fc_activation, **kwargs).build()
-    
+
+    elif model_name == 'res34_DETR':
+        model = res34_DETR(verbose=verbose, input_shape=input_shape,
+        n_classes=n_classes, dropout_rate=dropout_rate, fc_activation=fc_activation, **kwargs).build()
+
+    elif model_name == 'ResNest50_DETR':
+            model = ResNest50_DETR(verbose=verbose, input_shape=input_shape,
+            n_classes=n_classes, dropout_rate=dropout_rate, fc_activation=fc_activation, **kwargs).build()
+
     else:
         raise ValueError('Unrecognize model name {}'.format(model_name))
     return model
