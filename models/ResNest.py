@@ -402,16 +402,14 @@ class ResNest:
             x = self._make_layer(x, blocks=self.blocks_set[idx], filters=b1_b3_filters[idx], stride=2)
             if self.verbose: print('----- layer {} out {} -----'.format(idx,x.shape))
 
-        x = GlobalAveragePooling2D(name='avg_pool')(x)
-        if self.verbose: print('GlobalAveragePooling2D',x.shape)
-        # concats = GlobalAveragePooling2D(name="avg_pool")(x)
+        x = GlobalAveragePooling2D(name='avg_pool')(x) 
         if self.verbose:
-            print("pool_out:", concats.shape)
+            print("pool_out:", x.shape) # remove the concats var
 
         if self.dropout_rate > 0:
             x = Dropout(self.dropout_rate, noise_shape=None)(x)
 
-        fc_out = Dense(self.n_classes, kernel_initializer="he_normal", use_bias=False, name="fc_NObias")(concats)
+        fc_out = Dense(self.n_classes, kernel_initializer="he_normal", use_bias=False, name="fc_NObias")(x) # replace concats to x
         if self.verbose:
             print("fc_out:", fc_out.shape)
 
