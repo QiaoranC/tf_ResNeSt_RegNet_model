@@ -1,4 +1,5 @@
-from .ResNest import ResNest, ResNest3D
+from .ResNest import ResNest
+from .ResNest_3D import ResNest3D
 from .RegNet import RegNet
 from .res34_DETR import DETR as res34_DETR
 from .ResNest50_DETR import DETR as ResNest50_DETR
@@ -27,9 +28,24 @@ def get_model(model_name='ResNest50',input_shape=(224,224,3),n_classes=81,
         'resnest269':{
             'blocks_set': [3,30,48,8],
             'stem_width': 64,
-        }
+        },
     }
 
+    resnest3d_parameters = {
+        'resnest50_3d':{
+            'blocks_set': [3,4,6,3],
+            'stem_width': 32,
+        },
+        'resnest101_3d':{
+            'blocks_set': [3,4,23,3],
+            'stem_width': 64,
+        },
+        'resnest200_3d':{
+            'blocks_set': [3,24,36,3],
+            'stem_width': 64,
+        },
+
+    }
     regnet_parameters={
         'regnetx400':{
             'stage_depth': [1,2,7,12],
@@ -66,11 +82,10 @@ def get_model(model_name='ResNest50',input_shape=(224,224,3),n_classes=81,
 
 
     if model_name in resnest_parameters.keys():
-
         model = ResNest(verbose=verbose, input_shape=input_shape,
         n_classes=n_classes, dropout_rate=dropout_rate, fc_activation=fc_activation,
-        blocks_set=resnest_parameters[model_name['blocks_set']], radix=2, groups=1, bottleneck_width=64, deep_stem=True,
-        stem_width=resnest_parameters[model_name['stem_width']], avg_down=True, avd=True, avd_first=False,**kwargs).build()
+        blocks_set=resnest_parameters[model_name]['blocks_set'], radix=2, groups=1, bottleneck_width=64, deep_stem=True,
+        stem_width=resnest_parameters[model_name]['stem_width'], avg_down=True, avd=True, avd_first=False,**kwargs).build()
     
     elif model_name in regnet_parameters.keys():
         model = RegNet(verbose=verbose, input_shape=input_shape,
@@ -78,11 +93,11 @@ def get_model(model_name='ResNest50',input_shape=(224,224,3),n_classes=81,
         stage_depth=regnet_parameters[model_name['stage_depth']],stage_width=regnet_parameters[model_name['stage_width']],\
             stage_G=regnet_parameters[model_name['stage_G']],SEstyle_atten=regnet_parameters[model_name['SEstyle_atten']],**kwargs).build()
     
-    elif model_name == 'resnest3d':
+    if model_name in resnest3d_parameters.keys():
         model = ResNest3D(verbose=verbose, input_shape=input_shape,
         n_classes=n_classes, dropout_rate=dropout_rate, fc_activation=fc_activation,
-        blocks_set=resnest_parameters[model_name['blocks_set']], radix=2, groups=1, bottleneck_width=64, deep_stem=True,
-        stem_width=resnest_parameters[model_name['stem_width']], avg_down=True, avd=True, avd_first=False,**kwargs).build()
+        blocks_set=resnest3d_parameters[model_name]['blocks_set'], radix=2, groups=1, bottleneck_width=64, deep_stem=True,
+        stem_width=resnest3d_parameters[model_name]['stem_width'], avg_down=True, avd=True, avd_first=False,**kwargs).build()
 
     elif model_name == 'res34_detr':
         model = res34_DETR(verbose=verbose, input_shape=input_shape,

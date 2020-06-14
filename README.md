@@ -1,8 +1,6 @@
-# tf ResNeSt and RegNet and DETR
-
 ## Introduction
  Currently support tensorflow in 
- - **ResNeSt** 
+ - **ResNeSt**  2d&3d
  - **RegNet**
  - **DETR** (modified classfication)
  
@@ -12,7 +10,9 @@ welcome for using it, ask question, test it, find some bugs maybe.
 ResNeSt based on [offical github](https://github.com/zhanghang1989/ResNeSt) .
 
 ## Update
-**2020-6-5**: Add DETR (res34, resNest50 backbone) **End-to-End Object Detection with Transformers**, Experiment and inovation model, i slightly modified it into a classficaiton verison. Free to try.
+**2020-6-14**: Add **Resnest3D**, thanks to @vitanuan, model name `resnest50_3d`, `resnest101_3d`, `resnest200_3d`, input shape is 4d like `input_shape = [50,224,224,3]`
+
+**2020-6-5**: Add **DETR** (res34, resNest50 backbone) **End-to-End Object Detection with Transformers**, Experiment and inovation model, i slightly modified it into a classficaiton verison. Free to try.
 
 **2020-5-27**: ResNeSt add [CB-Net](https://arxiv.org/pdf/1909.03625.pdf) style to enahce backbone. theoretically, it should improve the results. Wait for test.
 
