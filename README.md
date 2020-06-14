@@ -25,23 +25,20 @@ model_name = 'ResNest50'
 input_shape = [224,244,3]
 n_classes = 81
 fc_activation = 'softmax'
+active = 'relu' # relu or mish
 
 model = get_model(model_name=model_name,
-                 input_shape=input_shape,
-                 n_classes=n_classes,
-                 verbose=False,
-                 fc_activation=fc_activation)
+                  input_shape=input_shape,
+                  n_classes=n_classes,
+                  fc_activation=fc_activation,
+                  active=active',
+                  verbose=False,
+                 )
 
 model.compile(optimizer='adam', loss=tf.keras.losses.BinaryCrossentropy())
 model.fit(...)
 ```
 
-
-- if you want use `Mish` as activation (default is `relu`): 
-```
-#it imporve the results, but come with high memory usage
-model = get_model(...,active='mish')
-```
 
 - if you add CB_Net in ResNeSt: add `using_cb=True` like:
 ```
