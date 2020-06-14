@@ -21,11 +21,12 @@ usage is simple:
 ```
 from models.model_factory import get_model
 
+model_name = 'ResNest50'
 input_shape = [224,244,3]
 n_classes = 81
 fc_activation = 'softmax'
 
-model = get_model(model_name="ResNest50",input_shape=input_shape,n_classes=n_classes,
+model = get_model(model_name=model_name",input_shape=input_shape,n_classes=n_classes,
                 verbose=False,fc_activation=fc_activation)
 model.compile(optimizer='adam', loss=tf.keras.losses.BinaryCrossentropy())
 ```
