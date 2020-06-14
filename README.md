@@ -26,17 +26,21 @@ input_shape = [224,244,3]
 n_classes = 81
 fc_activation = 'softmax'
 
-model = get_model(model_name=model_name",input_shape=input_shape,n_classes=n_classes,
-                verbose=False,fc_activation=fc_activation)
+model = get_model(model_name=model_name,
+                 input_shape=input_shape,
+                 n_classes=n_classes,
+                 verbose=False,
+                 fc_activation=fc_activation)
+
 model.compile(optimizer='adam', loss=tf.keras.losses.BinaryCrossentropy())
+model.fit(...)
 ```
 
 
 - if you want use `Mish` as activation (default is `relu`): 
 ```
 #it imporve the results, but come with high memory usage
-model = get_model(model_name="ResNest50",input_shape=input_shape,n_classes=n_classes,
-                verbose=False,fc_activation=fc_activation,active='mish')
+model = get_model(...,active='mish')
 ```
 
 - if you add CB_Net in ResNeSt: add `using_cb=True` like:
@@ -56,7 +60,7 @@ incorrect way:
 [223,223] != [224,224] cannt add
 """
 
-model = get_model(model_name="ResNest50",...,using_cb=True)
+model = get_model(...,using_cb=True)
 ```
 - DETR experiment model, free to modified the transformer setting.
 ```
@@ -66,12 +70,12 @@ model_name = 'ResNest50_DETR'
 #res34 not implement using_cb yet, it supporse to be a lighter verison.
 model_name = 'res34_DETR' 
 
-model = get_model(model_name=model_name,input_shape=input_shape,
-                n_classes=n_classes,verbose=True,
-                fc_activation=fc_activation,using_cb=True,
-                hidden_dim=512,nheads=8,num_encoder_layers=6,
-                num_decoder_layers=6,n_query_pos=100)
-
+model = get_model(...,
+                  hidden_dim=512,
+                  nheads=8,
+                  num_encoder_layers=6,
+                  num_decoder_layers=6,
+                  n_query_pos=100)
 ```
 
 
