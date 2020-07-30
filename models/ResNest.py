@@ -420,9 +420,7 @@ class ResNest:
 
         if self.verbose:
             print("Resnest builded with input {}, output{}".format(input_sig.shape, fc_out.shape))
-        if self.verbose:
             print("-------------------------------------------")
-        if self.verbose:
             print("")
 
         return model

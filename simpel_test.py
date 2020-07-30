@@ -4,11 +4,12 @@ if __name__ == "__main__":
 
     # model_names = ['ResNest50','ResNest101','ResNest200','ResNest269']
     # model_names = ['ResNest50']
-    model_names = ['resnest50_3d','resnest101_3d']
+    # model_names = ['resnest50_3d','resnest101_3d']
+    model_names = ['GENet_light','GENet_normal','GENet_large']
     
     # model_names = ['RegNetX400','RegNetX1.6','RegNetY400','RegNetY1.6']
     # input_shape = [224,224,3]
-    input_shape = [10,224,224,3]
+    input_shape = [10,256,256,3]
     n_classes=81
     fc_activation='softmax' #softmax sigmoid
 

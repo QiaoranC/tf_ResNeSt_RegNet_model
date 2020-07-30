@@ -3,6 +3,7 @@ from .ResNest_3D import ResNest3D
 from .RegNet import RegNet
 from .res34_DETR import DETR as res34_DETR
 from .ResNest50_DETR import DETR as ResNest50_DETR
+from .GENet import GENet
 
 def get_model(model_name='ResNest50',input_shape=(224,224,3),n_classes=81,
                 verbose=False,dropout_rate=0,fc_activation=None,**kwargs):
@@ -106,7 +107,15 @@ def get_model(model_name='ResNest50',input_shape=(224,224,3),n_classes=81,
     elif model_name == 'resnest_detr':
             model = ResNest50_DETR(verbose=verbose, input_shape=input_shape,
             n_classes=n_classes, dropout_rate=dropout_rate, fc_activation=fc_activation, **kwargs).build()
-
+    elif model_name == 'genet_light':
+            model = GENet(verbose=verbose, model_name='light',input_shape=input_shape,
+            n_classes=n_classes, fc_activation=fc_activation, **kwargs).build()
+    elif model_name == 'genet_normal':
+            model = GENet(verbose=verbose, model_name='normal',input_shape=input_shape,
+            n_classes=n_classes, fc_activation=fc_activation, **kwargs).build()
+    elif model_name == 'genet_large':
+            model = GENet(verbose=verbose, model_name='large',input_shape=input_shape,
+            n_classes=n_classes, fc_activation=fc_activation, **kwargs).build()
     else:
         raise ValueError('Unrecognize model name {}'.format(model_name))
     return model

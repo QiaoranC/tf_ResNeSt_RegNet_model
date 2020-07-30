@@ -3,6 +3,7 @@
  - **ResNeSt**  2d&3d
  - **RegNet**
  - **DETR** (modified classfication)
+ - **GENet** (2020 GPU-Efficient Network)
  
 model only, no pertrain model for download. easy to read and modified.   
 welcome for using it, ask question, test it, find some bugs maybe.
@@ -10,7 +11,7 @@ welcome for using it, ask question, test it, find some bugs maybe.
 ResNeSt based on [offical github](https://github.com/zhanghang1989/ResNeSt) .
 
 ## Update
-**To do**: Add [GENet: A GPU-Efficient Network](https://github.com/idstcv/GPU-Efficient-Networks). Paper results achieve good performence both in speed and accuracy. 
+**2020-7-30**: Add [GENet: A GPU-Efficient Network](https://github.com/idstcv/GPU-Efficient-Networks). Paper shows achieve good performence both in speed and accuracy. model name `GENet_light`, `GENet_normal`, `GENet_large`. 
 
 **2020-6-14**: Add **Resnest3D**, thanks to @vitanuan, model name `resnest50_3d`, `resnest101_3d`, `resnest200_3d`, input shape is 4d like `input_shape = [50,224,224,3]`
 
