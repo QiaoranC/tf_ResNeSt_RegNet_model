@@ -242,7 +242,6 @@ class GENet():
 
         if self.verbose: print('model_name {}'.format(self.model_name))
 
-        self.input_shape = [192,192,3]
         input_sig = Input(shape=self.input_shape)
 
         x = layers.Conv2D(self.channle_sets[0],kernel_size=3,strides=self.strides[0],
