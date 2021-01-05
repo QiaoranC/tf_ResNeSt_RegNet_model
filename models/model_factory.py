@@ -94,7 +94,7 @@ def get_model(model_name='ResNest50',input_shape=(224,224,3),n_classes=81,
         stage_depth=regnet_parameters[model_name['stage_depth']],stage_width=regnet_parameters[model_name['stage_width']],\
             stage_G=regnet_parameters[model_name['stage_G']],SEstyle_atten=regnet_parameters[model_name['SEstyle_atten']],**kwargs).build()
     
-    if model_name in resnest3d_parameters.keys():
+    elif model_name in resnest3d_parameters.keys():
         model = ResNest3D(verbose=verbose, input_shape=input_shape,
         n_classes=n_classes, dropout_rate=dropout_rate, fc_activation=fc_activation,
         blocks_set=resnest3d_parameters[model_name]['blocks_set'], radix=2, groups=1, bottleneck_width=64, deep_stem=True,
