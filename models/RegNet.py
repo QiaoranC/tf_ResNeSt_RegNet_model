@@ -34,10 +34,10 @@ class Mish(Activation):
         super(Mish, self).__init__(activation, **kwargs)
         self.__name__ = 'Mish'
 
-def mish(inputs):
-    # with tf.device("CPU:0"):
-    result = inputs * tf.math.tanh(tf.math.softplus(inputs))
-    return result
+    def mish(inputs):
+        # with tf.device("CPU:0"):
+        result = inputs * tf.math.tanh(tf.math.softplus(inputs))
+        return result
 
 
 class GroupedConv2D(object):
