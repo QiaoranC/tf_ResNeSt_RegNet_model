@@ -35,15 +35,13 @@ class Mish(Activation):
     based on https://github.com/digantamisra98/Mish/blob/master/Mish/TFKeras/mish.py
     Mish Activation Function.
     """
-
     def __init__(self, activation, **kwargs):
         super(Mish, self).__init__(activation, **kwargs)
         self.__name__ = "Mish"
 
-
-def mish(inputs):
-    result = inputs * tf.math.tanh(tf.math.softplus(inputs))
-    return result
+    def mish(inputs):
+        result = inputs * tf.math.tanh(tf.math.softplus(inputs))
+        return result
 
 
 class GroupedConv3D(object):
@@ -54,7 +52,6 @@ class GroupedConv3D(object):
     definition, where len(kernel_size) is number of groups. Notably, it allows
     different group has different kernel size.
     """
-
     def __init__(self, filters, kernel_size, use_keras=True, **kwargs):
         """Initialize the layer.
         Args:
